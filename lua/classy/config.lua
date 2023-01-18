@@ -8,7 +8,7 @@ local defaults = {
     javascript = [[
       ;; jsx
       ((property_identifier) @attr_name (#eq? @attr_name "class") [(jsx_expression (_)?) (string)] @attr_value) ]],
-    rust = [[ ((identifier) @attr_name (#eq? @attr_name "classes") (token_tree) @attr_value) ]],
+    svelte = [[ ((attribute_name) @attr_name (#eq? @attr_name "class") (quoted_attribute_value (attribute_value) @attr_value)) ]],
   },
   auto_start = true,
 }
