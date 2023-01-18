@@ -11,6 +11,7 @@ vim.g.loaded_classy = 1
 local classy = require "classy"
 local ns_id = vim.api.nvim_create_namespace "nvim-classy"
 local augroup_id = vim.api.nvim_create_augroup("nvim-classy", { clear = true })
+
 vim.api.nvim_create_user_command("ClassyConceal", function()
   if classy.opts.filetypes[vim.bo.filetype] == nil then
     vim.api.nvim_err_writeln "nvim-classy: invalid filetype"
@@ -25,6 +26,7 @@ vim.api.nvim_create_user_command("ClassyConceal", function()
     end,
   })
 end, {})
+
 vim.api.nvim_create_user_command("ClassyUnconceal", function()
   if classy.opts.filetypes[vim.bo.filetype] == nil then
     vim.api.nvim_err_writeln "nvim-classy: invalid filetype"
