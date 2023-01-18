@@ -41,13 +41,12 @@ local function get_classes(bufnr, lang)
 end
 
 local function set_conceal_extmarks(bufnr, ns_id, location)
-  vim.api.nvim_buf_set_extmark(
-    bufnr,
-    ns_id,
-    location.line[1],
-    location.col[1],
-    { conceal = ".", end_row = location.line[2], end_col = location.col[2] }
-  )
+  vim.api.nvim_buf_set_extmark(bufnr, ns_id, location.line[1], location.col[1], {
+    conceal = opts.conceal_char,
+    hl_group = opts.hl_group,
+    end_row = location.line[2],
+    end_col = location.col[2],
+  })
 end
 
 function M.conceal_classes(ns_id)
