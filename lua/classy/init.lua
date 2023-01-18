@@ -72,4 +72,6 @@ function M.setup(user_config)
   opts = config.get()
 end
 
+M.opts = opts
+
 return M
