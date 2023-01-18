@@ -17,20 +17,28 @@ local function get_classes(bufnr, lang)
   local parser = vim.treesitter.get_parser(bufnr, lang)
   local syntax_tree = parser:parse()[1]
   local root = syntax_tree:root()
+
   local matches = execute_query(lang)
   if matches == nil then
     return nil
   end
-
   local classes = {}
-  for _, captures, _ in matches:iter_matches(root, bufnr) do
+  for _, captures, metadata in matches:iter_matches(root, bufnr) do
     local idx = vim.fn.index(matches.captures, "attr_value")
     if idx == -1 then
       vim.api.nvim_err_writeln "nvim-classy: no @attr_value capture supplied"
       return nil
     end
-    local start_line, start_col, _ = captures[idx + 1]:start()
-    local end_line, end_col, _ = captures[idx + 1]:end_()
+    local start_line, start_col
+    local end_line, end_col
+
+    local attr_metadata = metadata[idx + 1]
+    if attr_metadata ~= nil then
+      start_line, start_col, end_line, end_col = unpack(attr_metadata.range)
+    else
+      start_line, start_col, _ = captures[idx + 1]:start()
+      end_line, end_col, _ = captures[idx + 1]:end_()
+    end
     table.insert(
       classes,
       { col = { start_col, end_col }, line = { start_line, end_line } }
