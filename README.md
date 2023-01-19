@@ -45,6 +45,7 @@ For example, to use it with HTML, make sure treesitter is installed and run
 nvim-classy has two main commands:
 - `:ClassyConceal`
 - `:ClassyUnconceal`
+- `:ClassyToggleConceal`
 
 These commands allow for fine-grained control over the plugin.
 
@@ -55,6 +56,9 @@ time the buffer is modified. This is run automatically by classy if the
 
 ### ClassyUnconceal
 This command wipes every conceal set by nvim-classy from the buffer.
+
+### ClassyToggleConceal
+Toggles concealing for the individual class under the cursor.
 
 ## Configuration
 The behavior of nvim-classy can be fully customized.

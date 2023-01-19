@@ -1,7 +1,11 @@
 local M = {}
 
 local config = require "classy.config"
+local ts_utils = require "nvim-treesitter.ts_utils"
+
 local opts = config.get()
+local extmarks = {}
+local ns_id = vim.api.nvim_create_namespace "nvim-classy"
 
 local function execute_query(lang)
   local query_string = opts.filetypes[lang]
@@ -13,7 +17,9 @@ local function execute_query(lang)
   return query
 end
 
-local function get_classes(bufnr, lang)
+local function get_classes(bufnr)
+  bufnr = bufnr or 0
+  local lang = vim.bo.filetype
   local parser = vim.treesitter.get_parser(bufnr, lang)
   local syntax_tree = parser:parse()[1]
   local root = syntax_tree:root()
@@ -42,41 +48,74 @@ local function get_classes(bufnr, lang)
     if start_line == end_line and end_col - start_col < opts.min_length then
       goto continue
     end
-    table.insert(
-      classes,
-      { col = { start_col, end_col }, line = { start_line, end_line } }
-    )
+    table.insert(classes, {
+      col = { start_col, end_col },
+      line = { start_line, end_line },
+      id = captures[idx + 1]:id(),
+    })
     ::continue::
   end
 
   return classes
 end
 
-local function set_conceal_extmarks(bufnr, ns_id, location)
-  vim.api.nvim_buf_set_extmark(bufnr, ns_id, location.line[1], location.col[1], {
-    conceal = opts.conceal_char,
-    hl_group = opts.hl_group,
-    end_row = location.line[2],
-    end_col = location.col[2],
-  })
+local function set_conceal_extmark(bufnr, location)
+  return vim.api.nvim_buf_set_extmark(
+    bufnr,
+    ns_id,
+    location.line[1],
+    location.col[1],
+    {
+      conceal = opts.conceal_char,
+      hl_group = opts.hl_group,
+      end_row = location.line[2],
+      end_col = location.col[2],
+    }
+  )
 end
 
-function M.conceal_classes(ns_id)
+function M.toggle_class_hide()
+  local node = ts_utils.get_node_at_cursor()
+  if node == nil then
+    return
+  end
+  local node_id = node:id()
+  if extmarks[node_id] == nil then
+    local classes = get_classes()
+    if classes == nil then
+      return nil
+    end
+    for _, class in ipairs(classes) do
+      if class.id == node_id then
+        extmarks[class.id] = set_conceal_extmark(0, class)
+        return
+      end
+    end
+  else
+    vim.api.nvim_buf_del_extmark(0, ns_id, extmarks[node_id])
+    extmarks[node_id] = nil
+    return
+  end
+  vim.api.nvim_err_writeln "nvim-classy: no node at cursor found"
+end
+
+function M.conceal_classes()
   local bufnr = vim.fn.bufnr()
-  local classes = get_classes(bufnr, vim.bo.filetype)
+  local classes = get_classes()
   if classes == nil then
     return
   end
 
-  M.unconceal_classes(ns_id)
+  M.unconceal_classes()
   for _, class in ipairs(classes) do
-    set_conceal_extmarks(bufnr, ns_id, class)
+    extmarks[class.id] = set_conceal_extmark(bufnr, class)
   end
 end
 
-function M.unconceal_classes(ns_id)
+function M.unconceal_classes()
   -- Clear all conceals in buffer
   vim.api.nvim_buf_clear_namespace(0, ns_id, 0, -1)
+  extmarks = {}
 end
 
 function M.setup(user_config)
