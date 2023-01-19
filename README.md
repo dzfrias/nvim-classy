@@ -59,6 +59,8 @@ This command wipes every conceal set by nvim-classy from the buffer.
 ## Configuration
 The behavior of nvim-classy can be fully customized.
 
+Run `require("classy").setup { <OPTIONS> }` to get access to the configuration.
+
 Here are the available options and their default values:
 ```lua
 {
