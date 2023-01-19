@@ -101,5 +101,8 @@ Contains queries of the filetypes that classy supports. To write your own, make
 sure to include an `@attr_value` capture so classy knows what to conceal!
 Make sure to read about writing treesitter queries!
 
+On a side note, if you'd like to contribute, it would be nice to have more
+filetypes supported.
+
 ## License
 This plugin is licensed under the MIT license.
