@@ -66,6 +66,8 @@ Here are the available options and their default values:
 {
   conceal_char = ".",
   conceal_hl_group = "",
+  min_length = 0,
+  auto_start = true,
   filetypes = {
     html = [[ ((attribute_name) @attr_name (#eq? @attr_name "class") (quoted_attribute_value (attribute_value) @attr_value)) ]],
     javascript = [[
@@ -73,7 +75,6 @@ Here are the available options and their default values:
       ((property_identifier) @attr_name (#eq? @attr_name "class") [(jsx_expression (_)?) (string)] @attr_value) ]],
     svelte = [[ ((attribute_name) @attr_name (#eq? @attr_name "class") (quoted_attribute_value (attribute_value) @attr_value)) ]],
   },
-  auto_start = true,
 }
 ```
 **conceal_char**:
@@ -85,13 +86,16 @@ the first character.
 The highlight group of the conceal character. Set it to `string` if you'd like
 the `conceal_char` to be the same color as the expanded classes.
 
+**min_length**:
+The minimum length that the class must be in order to be concealed.
+
+**auto_start**:
+If `true`, runs `:ClassyConceal` when you start editing the file.
+
 **filetypes**:
 Contains queries of the filetypes that classy supports. To write your own, make
 sure to include an `@attr_value` capture so classy knows what to conceal!
 Make sure to read about writing treesitter queries!
-
-**auto_start**:
-If `true`, runs `:ClassyConceal` when you start editing the file.
 
 ## License
 This plugin is licensed under the MIT license.

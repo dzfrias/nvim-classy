@@ -27,7 +27,7 @@ local function get_classes(bufnr, lang)
     local idx = vim.fn.index(matches.captures, "attr_value")
     if idx == -1 then
       vim.api.nvim_err_writeln "nvim-classy: no @attr_value capture supplied"
-      return nil
+      goto continue
     end
     local start_line, start_col
     local end_line, end_col
@@ -39,10 +39,14 @@ local function get_classes(bufnr, lang)
       start_line, start_col, _ = captures[idx + 1]:start()
       end_line, end_col, _ = captures[idx + 1]:end_()
     end
+    if start_line == end_line and end_col - start_col < opts.min_length then
+      goto continue
+    end
     table.insert(
       classes,
       { col = { start_col, end_col }, line = { start_line, end_line } }
     )
+    ::continue::
   end
 
   return classes
@@ -64,6 +68,7 @@ function M.conceal_classes(ns_id)
     return
   end
 
+  M.unconceal_classes(ns_id)
   for _, class in ipairs(classes) do
     set_conceal_extmarks(bufnr, ns_id, class)
   end
