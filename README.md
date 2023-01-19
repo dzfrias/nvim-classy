@@ -3,7 +3,7 @@ nvim-classy hides your HTML `class` attributes so your code goes from looking
 like this:
 ```html
 <div class="centered flex popout bring-to-front hover-effect">
-  <p class="whitespace main-paragraph">"Text"</p>
+  <p class="whitespace main-paragraph">Text</p>
 </div>
 ```
 to this:
