@@ -21,6 +21,9 @@ vim.api.nvim_create_user_command("ClassyConceal", function()
     pattern = "*",
     group = augroup_id,
     callback = function()
+      if classy.opts.filetypes[vim.bo.filetype] == nil then
+        return
+      end
       classy.conceal_classes()
     end,
   })
