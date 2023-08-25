@@ -13,7 +13,7 @@ local function execute_query(lang)
     vim.api.nvim_err_writeln "nvim-classy: invalid filetype"
     return nil
   end
-  local query = vim.treesitter.query.parse_query(lang, query_string)
+  local query = vim.treesitter.query.parse(lang, query_string)
   return query
 end
 
